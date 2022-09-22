@@ -1,4 +1,4 @@
-package vip.floatationdevice.guilded4j_personal.object.exception;
+package vip.floatationdevice.guilded4j_personal.exception;
 
 public class GuildedException extends RuntimeException
 {
