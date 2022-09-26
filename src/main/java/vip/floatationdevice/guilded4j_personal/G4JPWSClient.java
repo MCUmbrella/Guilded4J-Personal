@@ -72,7 +72,7 @@ public class G4JPWSClient extends WebSocketClient
         {//FIXME: doesnt post WelcomeEvent
             JSONObject j = new JSONObject(message.substring(1));
             if(verboseOutput) System.out.println(j.toStringPretty());
-            bus.post(new WelcomeEvent(this));
+            bus.post(new WelcomeEvent(this, j));
         }
         else if(message.startsWith("42[")) // normal event
         {

@@ -31,16 +31,20 @@ public class G4JPDebugger
             cookies = c.login();
             System.out.println("Login successful. Your cookies:\n" + cookies + "\nYou can save the line above for future use");
         }
-        c.registerEventListener(new EventListener());
-        c.setVerbose(true).connectWebSocket();
+        c.registerEventListener(new EventListener())
+                .setVerbose(true)
+                .connectWebSocket();
     }
 
     static class EventListener
     {
         @Subscribe
-        public void onConnect(WelcomeEvent e)
+        public void onWelcomeEvent(WelcomeEvent e)
         {
-            System.out.println("Logged in");
+            System.out.println("Logged in\nsid: " + e.getSid() +
+                    "\npingInterval: " + e.getPingInterval() +
+                    "\npingTimeout: " + e.getPingTimeout()
+            );
         }
 
         @Subscribe
