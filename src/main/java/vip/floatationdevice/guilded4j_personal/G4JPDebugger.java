@@ -1,9 +1,7 @@
 package vip.floatationdevice.guilded4j_personal;
 
 import com.google.common.eventbus.Subscribe;
-import vip.floatationdevice.guilded4j_personal.event.ConnectionClosedEvent;
-import vip.floatationdevice.guilded4j_personal.event.GuildedEvent;
-import vip.floatationdevice.guilded4j_personal.event.WelcomeEvent;
+import vip.floatationdevice.guilded4j_personal.event.*;
 
 import java.util.Scanner;
 
@@ -31,9 +29,9 @@ public class G4JPDebugger
             cookies = c.login();
             System.out.println("Login successful. Your cookies:\n" + cookies + "\nYou can save the line above for future use");
         }
-        c.registerEventListener(new EventListener());
-        c.setVerbose(true);
-        c.connectWebSocket();
+        c.registerEventListener(new EventListener())
+                .setVerbose(false)
+                .connectWebSocket();
     }
 
     static class EventListener
@@ -54,9 +52,15 @@ public class G4JPDebugger
         }
 
         @Subscribe
-        public void onGuildedEvent(GuildedEvent e)
+        public void onTyping(ChatChannelTyping e)
         {
-            System.out.println(e.getClass() + "\n" + e.getRaw().toString());
+            System.out.println("[" + e.getServerId() + "] [" + e.getChannelId() + "] " + e.getUserId() + " is typing");
+        }
+
+        @Subscribe
+        public void onUnknownGuildedEvent(UnknownGuildedEvent e)
+        {
+            System.err.println("UnknownGuildedEvent\n" + e.getRaw().toString() + "\n" + e.getReason());
         }
     }
 }

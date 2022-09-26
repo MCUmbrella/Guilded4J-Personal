@@ -90,7 +90,6 @@ public class G4JPWSClient extends WebSocketClient
             catch(ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                   InstantiationException | IllegalAccessException e)
             {
-                System.err.println(e);
                 eventBus.post(new UnknownGuildedEvent(this, j).setReason(e));
             }
         }
