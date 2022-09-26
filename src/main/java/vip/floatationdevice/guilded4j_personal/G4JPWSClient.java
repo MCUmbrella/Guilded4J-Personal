@@ -18,22 +18,23 @@ import java.net.URI;
  */
 public class G4JPWSClient extends WebSocketClient
 {
-    public final EventBus eventBus = new EventBus();
+    public final EventBus eventBus;
     public boolean verboseOutput = false;
-    private EventBus bus;
     private Thread hb;
 
-    public G4JPWSClient(String token, String cookies, String serverId)
+    public G4JPWSClient(String token, String cookies, String serverId, EventBus eventBus)
     {
         super(URI.create("wss://www.guilded.gg/ws/?teamId={0}&jwt=undefined&guildedClientId={1}&EIO=3&transport=websocket".replace("{0}", serverId).replace("{1}", token)));
+        this.eventBus = eventBus;
         setConnectionLostTimeout(30);
         addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0");
         addHeader("Cookie", cookies);
     }
 
-    public G4JPWSClient(String token, String cookies)
+    public G4JPWSClient(String token, String cookies, EventBus eventBus)
     {
         super(URI.create("wss://www.guilded.gg/ws/?jwt=undefined&guildedClientId={1}&EIO=3&transport=websocket".replace("{1}", token)));
+        this.eventBus = eventBus;
         setConnectionLostTimeout(30);
         addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0");
         addHeader("Cookie", cookies);
@@ -69,10 +70,11 @@ public class G4JPWSClient extends WebSocketClient
     {
         if(verboseOutput) System.out.println(message);
         if(message.startsWith("0{")) // welcome event
-        {//FIXME: doesnt post WelcomeEvent
+        {
+            if(verboseOutput) System.out.println("Posting WelcomeEvent");
             JSONObject j = new JSONObject(message.substring(1));
             if(verboseOutput) System.out.println(j.toStringPretty());
-            bus.post(new WelcomeEvent(this, j));
+            eventBus.post(new WelcomeEvent(this, j));
         }
         else if(message.startsWith("42[")) // normal event
         {
@@ -97,9 +99,9 @@ public class G4JPWSClient extends WebSocketClient
     @Override
     public void onClose(int code, String reason, boolean remote)
     {
-        if(verboseOutput) System.out.println("Connection closed\nCode: " + code + ", reason: " + reason);
         hb.interrupt();
-        bus.post(new ConnectionClosedEvent(this, code, reason, remote));
+        eventBus.post(new ConnectionClosedEvent(this, code, reason, remote));
+        if(verboseOutput) System.out.println("Connection closed\nCode: " + code + ", reason: " + reason);
     }
 
     @Override
@@ -117,13 +119,6 @@ public class G4JPWSClient extends WebSocketClient
     public G4JPWSClient setVerbose(boolean v)
     {
         verboseOutput = v;
-        return this;
-    }
-
-    public G4JPWSClient setEventBus(EventBus eventBus)
-    {
-        if(eventBus == null) throw new IllegalArgumentException();
-        bus = eventBus;
         return this;
     }
 }

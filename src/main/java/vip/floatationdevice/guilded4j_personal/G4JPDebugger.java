@@ -31,9 +31,9 @@ public class G4JPDebugger
             cookies = c.login();
             System.out.println("Login successful. Your cookies:\n" + cookies + "\nYou can save the line above for future use");
         }
-        c.registerEventListener(new EventListener())
-                .setVerbose(true)
-                .connectWebSocket();
+        c.registerEventListener(new EventListener());
+        c.setVerbose(true);
+        c.connectWebSocket();
     }
 
     static class EventListener

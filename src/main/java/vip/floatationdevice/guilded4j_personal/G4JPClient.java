@@ -31,9 +31,8 @@ public class G4JPClient
         for(String s : cookiesSplit)
             if(s.startsWith("guilded_mid="))
                 token = s.split("guilded_mid=")[1];
-        ws = new G4JPWSClient(token, cookies)
-                .setVerbose(verboseOutput)
-                .setEventBus(eventBus);
+        ws = new G4JPWSClient(token, cookies, eventBus)
+                .setVerbose(verboseOutput);
         isLoggedIn = true;
     }
 
@@ -53,9 +52,8 @@ public class G4JPClient
         }
         cookiesSb.setLength(cookiesSb.length() - 2);
         cookies = cookiesSb.toString();
-        ws = new G4JPWSClient(token, cookies)
-                .setVerbose(verboseOutput)
-                .setEventBus(eventBus);
+        ws = new G4JPWSClient(token, cookies, eventBus)
+                .setVerbose(verboseOutput);
         return cookies;
     }
 
@@ -63,9 +61,8 @@ public class G4JPClient
     {
         if(token == null && !isLoggedIn) throw new IllegalStateException();
         if(homeServerId != null)
-            ws = new G4JPWSClient(token, cookies, homeServerId)
-                    .setVerbose(verboseOutput)
-                    .setEventBus(eventBus);
+            ws = new G4JPWSClient(token, cookies, homeServerId, eventBus)
+                    .setVerbose(verboseOutput);
         ws.connect();
     }
 
